@@ -1,18 +1,22 @@
+// server.js
 import express from "express";
-import fetch from "node-fetch";
 import cors from "cors";
 
 const app = express();
 app.use(express.json({ limit: "1mb" }));
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").map(s => s.trim()).filter(Boolean);
+// CORS fin : ouvre pendant les tests, resserre ensuite via ALLOWED_ORIGINS
+const allowed = (process.env.ALLOWED_ORIGINS || "")
+  .split(",").map(s => s.trim()).filter(Boolean);
+
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) return cb(null, true);
+    if (!origin || allowed.length === 0 || allowed.includes(origin)) return cb(null, true);
     return cb(new Error("Origin not allowed by CORS"));
   }
 }));
 
+app.get("/", (_, res) => res.type("text").send("OK"));   // ← évite la page 502/“Cannot GET /”
 app.get("/health", (_, res) => res.json({ ok: true }));
 
 app.post("/api/chat", async (req, res) => {
@@ -22,7 +26,7 @@ app.post("/api/chat", async (req, res) => {
       return res.status(400).json({ error: "messages must be an array" });
     }
 
-    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,11 +39,12 @@ app.post("/api/chat", async (req, res) => {
       }),
     });
 
-    const data = await resp.json();
-    res.status(resp.status).json(data);
+    // Transmet le statut réel (utile pour debug 401/429)
+    const data = await r.json().catch(() => ({}));
+    return res.status(r.status).json(data);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "server_error" });
+    console.error("Proxy error:", err);
+    return res.status(500).json({ error: "server_error" });
   }
 });
 
