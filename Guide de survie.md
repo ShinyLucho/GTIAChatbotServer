@@ -1,6 +1,3 @@
-Parfait. Voici une **version complète, claire et auto-suffisante**, pensée pour ton collègue — quelqu’un qui démarre de zéro et veut refaire exactement ce que tu as fait.
-Tout est chronologique, reproductible, et annoté pour comprendre chaque étape.
-Je te l’ai structuré en Markdown pour que tu puisses le mettre sur GitHub directement (dans un `README.md` par exemple).
 
 ---
 
