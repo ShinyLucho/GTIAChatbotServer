@@ -1,7 +1,7 @@
 
 ---
 
-# 🚀 Guide complet : créer un modèle fine-tuné avec OpenAI (GPT-3.5 Turbo)
+# 🚀 Guide de survie : créer un modèle fine-tuné avec OpenAI (GPT-3.5 Turbo)
 
 > **Objectif** : entraîner un petit modèle de conversation personnalisé (ex. qui répond toujours “COUCOU”)
 > **Durée** : ~15 min
